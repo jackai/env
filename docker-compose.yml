@@ -1,0 +1,45 @@
+version: '2'
+services:
+  web:
+    image: "web"
+    volumes:
+       - "./app:/var/www"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - "backend"
+  mssql:
+    image: "microsoft/mssql-server-linux:latest"
+    volumes:
+      - "./db/mssql:/var/opt/mssql/data"
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "yourStrong(!)Password"
+    networks:
+      - "backend"
+  postgres:
+    image: "postgres"
+    volumes:
+       - ./db/pgsql:/data/postgres
+    restart: "always"
+    environment:
+      POSTGRES_PASSWORD: "pgpassword"
+      # DEBUG: "false"
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - "backend"
+  adminer:
+    image: "adminer-mssql" #"dockage/adminer" #"clue/adminer" #"adminer"
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - "backend"
+
+networks:
+  backend:
